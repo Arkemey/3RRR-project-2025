@@ -1,0 +1,2 @@
+0 - pb avec servo moteur, 'pas detecté', use DynamixelWizard (pas téléchargeable à l'ISIR)
+1 - definir pos initial grace aux angles de nos servomoteur. 
