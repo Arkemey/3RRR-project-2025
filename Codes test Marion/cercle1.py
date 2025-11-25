@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Polygon
 from matplotlib.animation import FuncAnimation
 
-# ============================================================================
-# PARAMÈTRES DU ROBOT
-# ============================================================================
 Rb = 0.100      # Rayon du cercle des bases (100 mm)
 L1 = 0.100      # Longueur bras actif Ai->Bi (100 mm)
 L2 = 0.100      # Longueur bras passif Bi->Ci (100 mm)
@@ -23,9 +20,8 @@ print("="*70)
 print("ROBOT 3RRR - Tracage securise d'un cercle")
 print("="*70)
 
-# ============================================================================
-# CINÉMATIQUE INVERSE
-# ============================================================================
+
+
 def ikm(param, x, y, alpha, config='elbow_up'): #Renvoie les 3 angles moteurs ; la poistion des points A (la base)
 #La position des points C (effecteur)
     """MGI: Calcule les angles moteurs"""
@@ -80,9 +76,9 @@ def get_B_positions(param, alpha_motors):
     #résultats
     return xB, yB, xA, yA
 
-# ============================================================================
-# VÉRIFICATION GÉOMÉTRIQUE DE LA PLATEFORME
-# ============================================================================
+
+
+
 def verify_platform_geometry(x, y, xC, yC, R, tolerance=0.001):
     """
     Vérifie que:
@@ -123,9 +119,9 @@ def verify_platform_geometry(x, y, xC, yC, R, tolerance=0.001):
     
     return True, "ok"
 
-# ============================================================================
-# VÉRIFICATIONS DE SÉCURITÉ
-# ============================================================================
+
+
+
 def check_collision_silent(xB, yB, Rb, safety):
     """Vérifie collision"""
     for i in range(3):
@@ -407,4 +403,5 @@ def main():
     animate_circle(param, path)
 
 if __name__ == "__main__":
+
     main()
