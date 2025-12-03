@@ -11,16 +11,16 @@ PROTOCOL_VERSION = 1.0
 h = 0.07 # taille coté triangle equi 7cm
 L = 0.1 # longueur des bras 10cm
 R = 0.275/2  # rayon du cercle des servomoteurs
-angles_moteurs = np.radians([0, 120, 240])
-Ox = R*np.cos(angles_moteurs) #les trois points contenant les servomoteurs
+angles_moteurs = np.radians([-83, 37, 157])
+Ox = R*np.cos(angles_moteurs) #les trois points contenant l es servomoteurs
 Oy = R*np.sin(angles_moteurs)
  
-DEVICE_NAME = "/dev/ttyUSB1"
+DEVICE_NAME = "/dev/ttyUSB0" 
 BAUDRATE = 1000000
 
 DXL_IDS = [1,2,3]
-OFFSET = [128.32, 105.47, 135]
-
+OFFSET = [-30, -30, -30]  #59.3 * 
+ 
 portHandler = PortHandler(DEVICE_NAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
 
@@ -67,10 +67,10 @@ def r_carre(x,y):
 
 def inverse_kinematics(x,y):
     m = h / np.sqrt(3) 
-    #xC = [x+m, x-m/2, x-m/2] # positions des points Ci selon G(x,y)
-    #yC = [y, y +(m*np.sqrt(3))/2, y - m*np.sqrt(3)/2]
-    xC = x + m*np.cos(angles_moteurs)
-    yC = y + m*np.sin(angles_moteurs)   
+    xC = [x+m, x-m/2, x-m/2] # positions des points Ci selon G(x,y)
+    yC = [y, y +(m*np.sqrt(3))/2, y - m*np.sqrt(3)/2]
+    #xC = x + m*np.cos(angles_moteurs)
+    #yC = y + m*np.sin(angles_moteurs)   
     angle_beta = [0,0,0]
     angle_alpha =[0,0,0]
     i = 0 
@@ -88,10 +88,10 @@ def inverse_kinematics(x,y):
         
         angle_beta[i] = np.arccos(cos_beta)
 
-        angle_alpha[i] = np.arctan2(dy,dx) - np.arctan2(L*np.sin(angle_beta[i]),L+ L*np.cos(angle_beta[i]))
+        angle_alpha[i] = np.arctan2(dy,dx) - np.arctan2(L*np.sin(angle_beta[i]),L+ L*np.cos(angle_beta[i])) 
         print("POUR LE SERVOMOTEUR NUMERO :", i+1)
-        print("angle alpha :  " , np.degrees(angle_alpha[i]) )
-        print("angle beta :  " , np.degrees(angle_beta[i]))
+        print("angle alpha :  " , np.degrees(angle_alpha[i])+OFFSET[i])
+        print("angle beta :  " , np.degrees(angle_beta[i])+OFFSET[i])
         print("xC, yC", "%.2f" % xC[i], "%.2f" % yC[i])
         i = i + 1
     return np.degrees(angle_alpha), np.degrees(angle_beta)
@@ -111,7 +111,8 @@ def positionsB(alpha):
 def singularite_serie(beta): #singularité série
     i = 0
     while(i < 3):  
-        if ((beta[i] == 0)or(beta[i] == np.pi)): #demo sur mon cahier tu le cestres
+        if ((beta[i] < 2)or((beta[i] > 178)and(beta[i])<182)): #demo sur mon cahier tu le cestres
+            print("SINGULARITÉ DETECTÉ <-------------- !!!!!!!!!!")
             return 0
         i += 1
     return 1
@@ -146,15 +147,19 @@ def main():
         print("ERROR: Impossible de régler le baudrate.")
         quit()
 
-    print("lancement du code")
+    print("Lancement du code")
     initialisation(110)
-    print("parpitié)")
+    print("Initalisation terminé, début du traçage")
     i = 0
 
     target_points = []
     while(i < 125):
-        target_x = 0.00 + 0.01* np.cos(i * 0.05) # Réduire le rayon à 1cm
-        target_y = 0.00 + 0.01* np.sin(i * 0.05)
+        # TRAJECTOIRE CERCLE : 
+        # target_x = 0.00 + 0.01* np.cos(i * 0.01) # Réduire le rayon à 1cm
+        # target_y = 0.00 + 0.01* np.sin(i * 0.01)
+        #TRAJECTOIRE LIGNE :
+        target_x = 0.01*i
+        target_y = 0.0
         target_points.append((target_x, target_y))
         i += 1
         i += 1
@@ -165,7 +170,7 @@ def main():
         if stop_program :
             break
 
-        mouvement_vers(x,y)
+        mouvement_vers(x,y) 
         print("pos :", x,y)
 
     for dxl in DXL_IDS:
@@ -174,5 +179,6 @@ def main():
     portHandler.closePort()
     print("fin du code") 
 
-main()
+main() 
+
 
