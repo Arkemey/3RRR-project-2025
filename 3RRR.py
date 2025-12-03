@@ -14,7 +14,7 @@ R = 0.275/2  # rayon du cercle des servomoteurs
 angles_moteurs = np.radians([0, 120, 240])
 Ox = R*np.cos(angles_moteurs) #les trois points contenant les servomoteurs
 Oy = R*np.sin(angles_moteurs)
-
+ 
 DEVICE_NAME = "/dev/ttyUSB1"
 BAUDRATE = 1000000
 
@@ -83,14 +83,15 @@ def inverse_kinematics(x,y):
         # Vérification domaine de validité pour arccos (évite les crashs) // GEMINI, à verifier. 
         val_acos = (r_2 - 2*L**2)/ (2*L**2)
         if val_acos > 1.0 or val_acos < -1.0:
-            print(f"ERREUR: Point hors d'atteinte pour le bras {i}")
+            print(f"ERREUR: Point hors d'atteinte pour le bras {i}") 
             return None, None, None # Indique une erreur
         
         angle_beta[i] = np.arccos(cos_beta)
 
         angle_alpha[i] = np.arctan2(dy,dx) - np.arctan2(L*np.sin(angle_beta[i]),L+ L*np.cos(angle_beta[i]))
-        print("angle alpha :  " , angle_alpha[i] )
-        print("angle beta :  " , angle_beta[i] )
+        print("POUR LE SERVOMOTEUR NUMERO :", i+1)
+        print("angle alpha :  " , np.degrees(angle_alpha[i]) )
+        print("angle beta :  " , np.degrees(angle_beta[i]))
         print("xC, yC", "%.2f" % xC[i], "%.2f" % yC[i])
         i = i + 1
     return np.degrees(angle_alpha), np.degrees(angle_beta)
@@ -174,3 +175,4 @@ def main():
     print("fin du code") 
 
 main()
+
